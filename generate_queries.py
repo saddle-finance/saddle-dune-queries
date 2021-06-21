@@ -58,7 +58,12 @@ def main():
 
     # generate_unique_deposit_addresses_query()
 
-    generate_cumulative_usd_volume()
+    # generate_cumulative_usd_volume()
+
+    # need to create a new query when a new pool is added
+    # select "area chart" viz and "enable stacking"
+    # then add each new token as a Y column in "result data"
+    generate_pool_liquidity_by_asset_queries()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
@@ -237,6 +242,49 @@ def generate_cumulative_usd_volume():
     query += VOLUME_SELECT_TEMPLATE
 
     print query
+
+def generate_pool_liquidity_by_asset_queries():
+    for pool in POOLS:
+        query = "WITH "
+        sum_queries = []
+        pool_token_vals = []
+        totals = []
+        for token in pool["tokens"]:
+            ticker, decimals, address = token
+            # identifier = "%s_%s" % (pool["name"], ticker)
+            identifier = ticker
+            query += TOKEN_DEPOSIT_WITHDRAW_TEMPLATE % (
+                identifier,
+                decimals, identifier,
+                pool["address"],
+                address,
+                decimals, identifier,
+                pool["address"],
+                address
+            )
+            sum_queries.append('sum(sum(%s_val)) over (order by Date) as "%s"' % (identifier, identifier))
+            pool_token_vals.append("%s_val" % identifier)
+
+        padded_query = "\tSELECT Date, "
+        for t in pool_token_vals:
+            padded_query += "0 as %s, " % t
+        # trim extra comma
+        padded_query = padded_query[:-2]
+
+        for t in pool_token_vals:
+            fixed = padded_query.replace("0 as %s" % t, t)
+            totals.append("%s FROM %s" % (fixed, t.replace("_val", "")))
+
+        query += TOTALS_TEMPLATE % (
+            ',\n'.join(sum_queries),
+            "\tUNION ALL\n".join(totals)
+        )
+        query = query.replace("LIMIT 1", "")
+        query += "\nSELECT * FROM totals"
+
+        print query
+
+        print "\n============================================================\n"
 
 if __name__ == "__main__":
     main()
