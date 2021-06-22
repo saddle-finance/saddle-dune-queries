@@ -66,7 +66,9 @@ def main():
     # generate_pool_liquidity_by_asset_queries()
 
     # add each new token as a Y column in "result data"
-    generate_daily_volume_by_asset_query()
+    # generate_daily_volume_by_asset_query()
+
+    generate_weekly_usd_volume_query()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
@@ -361,6 +363,48 @@ def generate_daily_volume_by_asset_query():
     )
 
     print query
+
+WEEKLY_VOLUME_SELECT = """)
+
+SELECT
+Date,
+sum(usd_volume) as "USD Volume"
+FROM volume
+GROUP BY 1
+ORDER BY 1 DESC
+"""
+def generate_weekly_usd_volume_query():
+    query = "WITH volume as ("
+    volumes = []
+    for pool in POOLS:
+        price_table = 'prices."layer1_usd"'
+        symbol = "BTC"
+        if pool["type"] is "eth":
+            symbol = "ETH"
+        for idx, token in enumerate(pool["tokens"]):
+            ticker, decimals, address = token
+            if pool["type"] is "stablecoin":
+                volumes.append(VOLUME_STABLECOIN_TEMPLATE % (
+                    decimals,
+                    pool["table"],
+                    idx,
+                    pool["address"],
+                ))
+            else:
+                volumes.append(VOLUME_TEMPLATE % (
+                    decimals,
+                    pool["table"],
+                    price_table,
+                    idx,
+                    pool["address"],
+                    symbol
+                ))
+
+    query += "UNION ALL".join(volumes)
+    query += WEEKLY_VOLUME_SELECT
+
+    # replace day with week for date_trunc
+    print query.replace("day", "week")
 
 if __name__ == "__main__":
     main()
