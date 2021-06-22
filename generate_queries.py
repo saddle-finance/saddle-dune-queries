@@ -63,7 +63,10 @@ def main():
     # need to create a new query when a new pool is added
     # select "area chart" viz and "enable stacking"
     # then add each new token as a Y column in "result data"
-    generate_pool_liquidity_by_asset_queries()
+    # generate_pool_liquidity_by_asset_queries()
+
+    # add each new token as a Y column in "result data"
+    generate_daily_volume_by_asset_query()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
@@ -285,6 +288,79 @@ def generate_pool_liquidity_by_asset_queries():
         print query
 
         print "\n============================================================\n"
+
+DAILY_VOLUME_TOTALS_TEMPLATE = """
+
+SELECT
+Date,
+%s
+FROM
+(
+%s
+) t
+GROUP BY 1
+ORDER BY 1 DESC
+"""
+def generate_daily_volume_by_asset_query():
+    query = "WITH "
+    token_vals = []
+    sum_queries = []
+    totals = []
+    for pool in POOLS:
+        price_table = 'prices."layer1_usd"'
+        symbol = "BTC"
+        if pool["type"] is "eth":
+            symbol = "ETH"
+        for idx, token in enumerate(pool["tokens"]):
+            ticker, decimals, address = token
+            identifier = "%s_%s" % (pool["name"], ticker)
+            usd_identifier = "%s_usd" % identifier
+            query += "%s as (" % identifier
+            if pool["type"] is "stablecoin":
+                vol_query = VOLUME_STABLECOIN_TEMPLATE % (
+                    decimals,
+                    pool["table"],
+                    idx,
+                    pool["address"],
+                )
+                query += vol_query.replace("usd_volume", usd_identifier)
+            else:
+                vol_query = VOLUME_TEMPLATE % (
+                    decimals,
+                    pool["table"],
+                    price_table,
+                    idx,
+                    pool["address"],
+                    symbol
+                )
+                query += vol_query.replace("usd_volume", usd_identifier)
+            query += "),\n\n"
+            sum_queries.append('sum(%s) as "[%s] %s"' % (
+                "%s_usd" % identifier,
+                pool["name"],
+                ticker,
+            ))
+            token_vals.append(usd_identifier)
+
+    # trim extra comma
+    query = query[:-3]
+
+    padded_query = "\tSELECT Date, "
+    for t in token_vals:
+        padded_query += "0 as %s, " % t
+    # trim extra comma
+    padded_query = padded_query[:-2]
+
+    for t in token_vals:
+        fixed = padded_query.replace("0 as %s" % t, t)
+        totals.append("%s FROM %s" % (fixed, t.replace("_usd", "")))
+
+    query += DAILY_VOLUME_TOTALS_TEMPLATE % (
+        ",\n".join(sum_queries),
+        "\tUNION ALL\n".join(totals)
+    )
+
+    print query
 
 if __name__ == "__main__":
     main()
