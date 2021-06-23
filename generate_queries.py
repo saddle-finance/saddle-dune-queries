@@ -68,7 +68,14 @@ def main():
     # add each new token as a Y column in "result data"
     # generate_daily_volume_by_asset_query()
 
-    generate_weekly_usd_volume_query()
+    # generate_weekly_usd_volume_query()
+
+    # doesn't need to updated in dune unless we add a new contract type
+    # eg SwapFlashLoan_evt_TokenSwap / SwapUtils_evt_TokenSwap
+    # generate_trades_per_day_query()
+
+    # note that this prints out two queries, the first one can be ignored
+    generate_weekly_usd_fees_query()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
@@ -404,7 +411,45 @@ def generate_weekly_usd_volume_query():
     query += WEEKLY_VOLUME_SELECT
 
     # replace day with week for date_trunc
-    print query.replace("day", "week")
+    query = query.replace("day", "week")
+
+    print query
+
+    # this is used to compose the weekly usd fees query
+    return query
+
+POOL_TRADES_TEMPLATE = """
+SELECT
+date_trunc('day', evt_block_time) as Date,
+count(evt_tx_hash) as trade_count
+FROM saddle."%s"
+GROUP BY 1
+"""
+DAILY_TRADES_TEMPLATE = """)
+
+SELECT
+Date,
+trade_count as "Trades Per Day"
+FROM trades
+ORDER BY 1 DESC
+"""
+def generate_trades_per_day_query():
+    query = "WITH trades as ("
+    contracts = set()
+    contract_queries = []
+    for pool in POOLS:
+        contracts.add(pool["table"])
+    for c in contracts:
+        contract_queries.append(POOL_TRADES_TEMPLATE % c)
+    query += "UNION ALL".join(contract_queries)
+    query += DAILY_TRADES_TEMPLATE
+
+    print query
+
+def generate_weekly_usd_fees_query():
+    query = generate_weekly_usd_volume_query()
+
+    print query.replace('volume) as "USD Volume"', 'volume * .0004) as "USD Fees"')
 
 if __name__ == "__main__":
     main()
