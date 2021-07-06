@@ -49,6 +49,19 @@ POOLS = [
             ["sETH", 18, "\\x5e74c9036fb86bd7ecdcb084a0673efc32ea31cb"],
         ]
     },
+    {
+        "name": "d4",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\xC69DDcd4DFeF25D8a793241834d4cc4b3668EAD6",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["alUSD", 18, "\\xBC6DA0FE9aD5f3b0d58160288917AA56653660E9"],
+            ["FEI", 18, "\\x956F47F50A910163D8BF957Cf5846D573E7f87CA"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+            ["LUSD", 18, "\\x5f98805A4E8be255a32880FDeC7F6728C6568bA0"],
+        ]
+    },
 ]
 
 
@@ -70,12 +83,12 @@ def main():
 
     # generate_weekly_usd_volume_query()
 
+    # note that this prints out two queries, the first one can be ignored
+    # generate_weekly_usd_fees_query()
+
     # doesn't need to updated in dune unless we add a new contract type
     # eg SwapFlashLoan_evt_TokenSwap / SwapUtils_evt_TokenSwap
-    # generate_trades_per_day_query()
-
-    # note that this prints out two queries, the first one can be ignored
-    generate_weekly_usd_fees_query()
+    generate_trades_per_day_query()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
