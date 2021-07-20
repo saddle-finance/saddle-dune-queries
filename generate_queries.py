@@ -62,6 +62,19 @@ POOLS = [
             ["LUSD", 18, "\\x5f98805A4E8be255a32880FDeC7F6728C6568bA0"],
         ]
     },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "stablecoin_v2",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
 ]
 
 
