@@ -75,6 +75,72 @@ POOLS = [
             ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
         ]
     },
+    {
+        "name": "susd",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\x0C8BAe14c9f9BF2c953997C881BEfaC7729FD314",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
+    {
+        "name": "btc_v2",
+        "type": "btc",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\xdf3309771d2BF82cb2B6C56F9f5365C8bD97c4f2",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["WBTC", 8, "\\x2260fac5e5542a773aa44fbcfedf7c193bc2c599"],
+            ["renBTC", 8, "\\xeb4c2781e4eba804ce9a9803c67d0893436bb27d"],
+            ["SBTC", 18, "\\xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6"],
+        ]
+    },
+    {
+        "name": "tbtc",
+        "type": "btc",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\xf74ebe6e5586275dc4CeD78F5DBEF31B1EfbE7a5",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["BTC_V2_LP", 18, "\\xF32E91464ca18fc156aB97a697D6f8ae66Cd21a3"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["WBTC", 8, "\\x2260fac5e5542a773aa44fbcfedf7c193bc2c599"],
+            ["renBTC", 8, "\\xeb4c2781e4eba804ce9a9803c67d0893436bb27d"],
+            ["SBTC", 18, "\\xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6"],
+        ]
+    },
+    {
+        "name": "cusd",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\x3F1d224557afA4365155ea77cE4BC32D5Dae2174",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
 ]
 
 
@@ -276,6 +342,25 @@ def generate_cumulative_usd_volume():
                     pool["address"],
                     symbol
                 ))
+        if pool["table"] is "MetaSwap_evt_TokenSwap":
+            for idx, token in enumerate(pool["underlyingTokens"]):
+                ticker, decimals, address = token
+                if pool["type"] is "stablecoin":
+                    volumes.append(VOLUME_STABLECOIN_TEMPLATE % (
+                        decimals,
+                        "MetaSwap_evt_TokenSwapUnderlying",
+                        idx,
+                        pool["address"],
+                    ))
+                else:
+                    volumes.append(VOLUME_TEMPLATE % (
+                        decimals,
+                        "MetaSwap_evt_TokenSwapUnderlying",
+                        price_table,
+                        idx,
+                        pool["address"],
+                        symbol
+                    ))
     query += "UNION ALL".join(volumes)
     query += VOLUME_SELECT_TEMPLATE
 
@@ -336,6 +421,9 @@ FROM
 GROUP BY 1
 ORDER BY 1 DESC
 """
+
+# TODO: replace with daily volume by pool instead
+# NOTE: not updated for metapools
 def generate_daily_volume_by_asset_query():
     query = "WITH "
     token_vals = []
@@ -432,6 +520,25 @@ def generate_weekly_usd_volume_query():
                     pool["address"],
                     symbol
                 ))
+        if pool["table"] is "MetaSwap_evt_TokenSwap":
+            for idx, token in enumerate(pool["underlyingTokens"]):
+                ticker, decimals, address = token
+                if pool["type"] is "stablecoin":
+                    volumes.append(VOLUME_STABLECOIN_TEMPLATE % (
+                        decimals,
+                        "MetaSwap_evt_TokenSwapUnderlying",
+                        idx,
+                        pool["address"],
+                    ))
+                else:
+                    volumes.append(VOLUME_TEMPLATE % (
+                        decimals,
+                        "MetaSwap_evt_TokenSwapUnderlying",
+                        price_table,
+                        idx,
+                        pool["address"],
+                        symbol
+                    ))
 
     query += "UNION ALL".join(volumes)
     query += WEEKLY_VOLUME_SELECT
