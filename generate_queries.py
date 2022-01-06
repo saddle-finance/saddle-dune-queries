@@ -141,6 +141,60 @@ POOLS = [
             ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
         ]
     },
+    {
+        "name": "susd_v2",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\x824dcD7b044D60df2e89B1bB888e66D8BCf41491",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
+    {
+        "name": "tbtc_v2",
+        "type": "btc",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\xA0b4a2667dD60d5CdD7EcFF1084F0CeB8dD84326",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["BTC_V2_LP", 18, "\\xF32E91464ca18fc156aB97a697D6f8ae66Cd21a3"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["WBTC", 8, "\\x2260fac5e5542a773aa44fbcfedf7c193bc2c599"],
+            ["renBTC", 8, "\\xeb4c2781e4eba804ce9a9803c67d0893436bb27d"],
+            ["SBTC", 18, "\\xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6"],
+        ]
+    },
+    {
+        "name": "cusd_v2",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\xc02D481B52Ae04Ebc76a8882441cfAED45eb8342",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
 ]
 
 
@@ -158,6 +212,8 @@ def main():
     # generate_pool_liquidity_by_asset_queries()
 
     # add each new token as a Y column in "result data"
+    # TODO: replace with daily volume by pool instead
+    # NOTE: not updated for metapools
     # generate_daily_volume_by_asset_query()
 
     # generate_weekly_usd_volume_query()
