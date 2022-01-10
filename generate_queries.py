@@ -200,7 +200,7 @@ POOLS = [
 
 def main():
     # need to update for new prices when adding non-eth/btc/stablecoin tokens
-    # generate_total_usd_tvl_query()
+    generate_total_usd_tvl_query()
 
     # generate_unique_deposit_addresses_query()
 
@@ -223,7 +223,7 @@ def main():
 
     # doesn't need to updated in dune unless we add a new contract type
     # eg SwapFlashLoan_evt_TokenSwap / SwapUtils_evt_TokenSwap
-    generate_trades_per_day_query()
+    # generate_trades_per_day_query()
 
 TOKEN_DEPOSIT_WITHDRAW_TEMPLATE = """%s as
 (
@@ -278,6 +278,9 @@ def generate_total_usd_tvl_query():
         pool_token_vals = []
         for token in pool["tokens"]:
             ticker, decimals, address = token
+            # don't include LP tokens in TVL to avoid double counting
+            if ticker.endswith("_LP"):
+                continue
             identifier = "%s_%s" % (pool["name"], ticker)
             query += TOKEN_DEPOSIT_WITHDRAW_TEMPLATE % (
                 identifier,
