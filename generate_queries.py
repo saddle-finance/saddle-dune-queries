@@ -195,6 +195,73 @@ POOLS = [
             ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
         ]
     },
+    {
+        "name": "susd_v3",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\x4568727f50c7246ded8C39214Ed6FF3c157f080D",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
+    {
+        "name": "tbtc_v3",
+        "type": "btc",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\xfa9ED0309Bf79Eb84C847819F0B3CB84F6d351Af",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["BTC_V2_LP", 18, "\\xF32E91464ca18fc156aB97a697D6f8ae66Cd21a3"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["TBTC", 18, "\\x18084fba666a33d37592fa2633fd49a74dd93a88"],
+            ["WBTC", 8, "\\x2260fac5e5542a773aa44fbcfedf7c193bc2c599"],
+            ["renBTC", 8, "\\xeb4c2781e4eba804ce9a9803c67d0893436bb27d"],
+            ["SBTC", 18, "\\xfe18be6b3bd88a2d2a7f928d00292e7a9963cfc6"],
+        ]
+    },
+    {
+        "name": "cusd_v3",
+        "type": "stablecoin",
+        "table": "MetaSwap_evt_TokenSwap",
+        "address": "\\xB62222B941e9B652BE3632EEa062cb0ff66b1d1c",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["USD_V2_LP", 18, "\\x5f86558387293b6009d7896A61fcc86C17808D62"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["cUSD", 18, "\\xad3E3Fc59dff318BecEaAb7D00EB4F68b1EcF195"],
+            ["DAI", 18, "\\x6b175474e89094c44da98b954eedeac495271d0f"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+        ]
+    },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "frax_3pool",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\x8cAEa59f3Bf1F341f89c51607E4919841131e47a",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+        ]
+    },
 ]
 
 
@@ -317,7 +384,7 @@ def generate_total_usd_tvl_query():
     )
     query += PRICE_TEMPLATE % " + ".join(prices)
 
-    print query
+    print(query)
 
 DEPOSIT_TEMPLATE="""
 SELECT
@@ -346,7 +413,7 @@ def generate_unique_deposit_addresses_query():
     query += "UNION ALL".join(interactions)
     query += DISTINCT_TEMPLATE
 
-    print query
+    print(query)
 
 VOLUME_TEMPLATE = """
 SELECT
@@ -423,7 +490,7 @@ def generate_cumulative_usd_volume():
     query += "UNION ALL".join(volumes)
     query += VOLUME_SELECT_TEMPLATE
 
-    print query
+    print(query)
 
 def generate_pool_liquidity_by_asset_queries():
     for pool in POOLS:
@@ -464,9 +531,9 @@ def generate_pool_liquidity_by_asset_queries():
         query = query.replace("LIMIT 1", "")
         query += "\nSELECT * FROM totals"
 
-        print query
+        print(query)
 
-        print "\n============================================================\n"
+        print("\n============================================================\n")
 
 DAILY_VOLUME_TOTALS_TEMPLATE = """
 
@@ -542,7 +609,7 @@ def generate_daily_volume_by_asset_query():
         "\tUNION ALL\n".join(totals)
     )
 
-    print query
+    print(query)
 
 WEEKLY_VOLUME_SELECT = """)
 
@@ -605,7 +672,7 @@ def generate_weekly_usd_volume_query():
     # replace day with week for date_trunc
     query = query.replace("day", "week")
 
-    print query
+    print(query)
 
     # this is used to compose the weekly usd fees query
     return query
@@ -636,12 +703,12 @@ def generate_trades_per_day_query():
     query += "UNION ALL".join(contract_queries)
     query += DAILY_TRADES_TEMPLATE
 
-    print query
+    print(query)
 
 def generate_weekly_usd_fees_query():
     query = generate_weekly_usd_volume_query()
 
-    print query.replace('volume) as "USD Volume"', 'volume * .0004) as "USD Fees"')
+    print(query.replace('volume) as "USD Volume"', 'volume * .0004) as "USD Fees"'))
 
 if __name__ == "__main__":
     main()
