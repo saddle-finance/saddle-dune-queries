@@ -262,6 +262,72 @@ POOLS = [
             ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
         ]
     },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "frax_usdc_bp",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\x13cc34aa8037f722405285ad2c82fe570bfa2bdc",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+        ]
+    },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "frax_bp_usdt",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\xc765cd3d015626244ad63b5fb63a97c5634643b9",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+            ["FRAX_USDC_LP", 18, "\\x927e6f04609a45b107c789af34ba90ebbf479f7f"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["USDT", 6, "\\xdac17f958d2ee523a2206206994597c13d831ec7"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+        ]
+    },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "frax_bp_susd",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\x69baa0d7c2e864b74173922ca069ac79d3be1556",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["FRAX_USDC_LP", 18, "\\x927e6f04609a45b107c789af34ba90ebbf479f7f"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["sUSD", 18, "\\x57Ab1ec28D129707052df4dF418D58a2D46d5f51"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+        ]
+    },
+    {
+        # note: must use underscores instead of dashes for proper SQL generation
+        "name": "frax_bp_alusd",
+        "type": "stablecoin",
+        "table": "SwapFlashLoan_evt_TokenSwap",
+        "address": "\\xa50f208efc277d5a03c991069939beacccda80d9",
+        "tokens": [
+            # ticker, decimals, contract address
+            ["alUSD", 18, "\\xBC6DA0FE9aD5f3b0d58160288917AA56653660E9"],
+            ["FRAX_USDC_LP", 18, "\\x927e6f04609a45b107c789af34ba90ebbf479f7f"],
+        ],
+        "underlyingTokens": [
+            # ticker, decimals, contract address
+            ["alUSD", 18, "\\xBC6DA0FE9aD5f3b0d58160288917AA56653660E9"],
+            ["USDC", 6, "\\xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"],
+            ["FRAX", 18, "\\x853d955aCEf822Db058eb8505911ED77F175b99e"],
+        ]
+    },
 ]
 
 
