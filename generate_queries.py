@@ -315,7 +315,7 @@ POOLS = [
         "name": "frax_bp_alusd",
         "type": "stablecoin",
         "table": "SwapFlashLoan_evt_TokenSwap",
-        "address": "\\xa50f208efc277d5a03c991069939beacccda80d9",
+        "address": "\\xFB516cF3710fC6901F2266aAEB8834cF5e4E9558",
         "tokens": [
             # ticker, decimals, contract address
             ["alUSD", 18, "\\xBC6DA0FE9aD5f3b0d58160288917AA56653660E9"],
